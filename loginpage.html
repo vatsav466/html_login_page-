@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .background-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .background-video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .login-form-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 0 auto;
+        }
+
+        .login-wrapper {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-form-container h3 {
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .social-login a {
+            width: 32%;
+            height: 40px;
+            display: inline-block;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: none;
+        }
+
+        .custom1 {
+            background-image: url('https://www.svgrepo.com/show/475656/google-color.svg');
+        }
+
+        .custom2 {
+            background-image: url('https://www.svgrepo.com/show/452196/facebook-1.svg');
+        }
+
+        .custom3 {
+            background-image: url('https://www.svgrepo.com/show/448252/twitter.svg');
+        }
+
+        .password-validation {
+            font-size: 12px;
+            color: #000000;
+            margin-top: 5px;
+        }
+
+        .form-group .btn + .btn {
+            margin-top: 10px;
+        }
+
+        .btn-signup {
+            background-color: #28a745;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background video container -->
+    <div class="background-video-container">
+        <video autoplay muted loop>
+            <source src="https://cdn.pixabay.com/video/2017/06/05/9584-220312371_tiny.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Login form container -->
+    <div class="login-wrapper">
+        <div class="login-form-container">
+            <div class="text-center">
+                <img src="https://www.india.com/wp-content/uploads/2020/05/thalapathy-vijay-master-to-release-on-diwali-main.jpg" alt="Logo" class="logo">
+            </div>
+            <h3 class="text-center">Login</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" oninput="validatePassword()" required>
+                    <div id="passwordValidationMessage" class="password-validation"></div>
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </div>
+                <div class="form-group text-center">
+                    <button type="button" class="btn btn-signup w-100">Sign Up</button>
+                </div>
+            </form>
+            <div class="text-center">
+                <a href="#">Forgot password?</a>
+            </div>
+            <div class="social-login">
+                <a href="https://myaccount.google.com/" class="custom1" title="Sign in with Google"></a>
+                <a href="https://www.facebook.com/" class="custom2" title="Sign in with Facebook"></a>
+                <a href="https://x.com/i/flow/login" class="custom3" title="Sign in with Twitter"></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const validationMessage = document.getElementById('passwordValidationMessage');
+            const minLength = 6;
+            const hasAtSymbol = password.includes('@');
+            let message = '';
+            if (password.length < minLength) {
+                message += 'Password must be at least 6 characters long. ';
+            }
+            if (!hasAtSymbol) {
+                message += 'Password must contain "@".';
+            }
+            validationMessage.textContent = message;
+        }
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            window.location.href = 'mainpages.html';
+        });
+    </script>
+</body>
+</html>

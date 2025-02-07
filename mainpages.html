@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytic Centre</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4eff4;
+            display: flex;
+        }
+        .sidebar {
+            width: 300px;
+            background-color: #2C3E50;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow-y: auto; 
+        }
+        .extra-buttons {
+            display: none;
+            padding: 10px;
+            background-color: #34495E;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background-color: #2C3E50;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 4px;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            width: calc(100% - 280px);
+            min-height: 100vh;
+            box-sizing: border-box;
+            position: relative;
+            padding-bottom: 80px;
+        }
+
+        /* Profile styles */
+        .profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 2px solid #000000;
+        }
+
+        .profile-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            color: rgb(255, 250, 250);
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Menu buttons styles */
+        .menu-buttons {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-buttons button {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #34495E;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            text-align: left;
+            transition: background-color 0.3s, transform 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .menu-buttons button:hover {
+            background-color: #2C3E50;
+            transform: scale(1.05);
+        }
+
+        .menu-buttons button .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .menu-buttons button .icon img {
+            width: 20px;
+            height: 20px;
+        }
+        .search-container {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 316px;
+        }
+        .search-icon {
+            margin-right: 10px;
+        }
+        .search-box {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 5px;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+        .chart-box {
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid black;
+        }
+        .chart-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .chart-logo {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .chart-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .chart-name {
+            color: #2C3E50;
+            font-weight: bold;
+        }
+        .dataset-dropdown {
+            position: absolute;
+            width: 325px;
+            background: white;
+            border-radius: 8px;
+            max-height: 197px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(252, 251, 251, 0.1);
+            margin-top: 245px;
+        }
+        .dataset-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .dataset-item:hover {
+            background-color: #faf0f0;
+        }
+        .dataset-dropdown.show {
+            display: block;
+        }
+        .next-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .next-button:hover {
+            background-color: #219a52;
+        }
+        .selected {
+            border: 2px solid #27ae60;
+        }
+        #analyticCentreContent {
+            display: none;
+        }
+
+        #analyticCentreContent.active {
+            display: block;
+        }
+        .menu-buttons {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile">
+            <div class="profile-logo">
+                <img src="https://www.india.com/wp-content/uploads/2020/05/thalapathy-vijay-master-to-release-on-diwali-main.jpg" alt="Profile Logo">
+            </div>
+            <div class="profile-name">Hunt</div>
+        </div>
+
+        <div class="menu-buttons">
+            <button id="organizationBtn" onclick="toggleExtraButtons()">
+                <div class="icon">
+                    <img src="https://t4.ftcdn.net/jpg/08/25/55/11/360_F_825551122_RpDx2lS7XsawI3RVfnZm7Kz3L6RjpgAH.jpg" alt="Organization" style="width: 50px; height: 40px;">
+                </div>
+                Organization
+            </button>
+            <div class="extra-buttons" id="extraButtons">
+                <button id="merichtechBtn">
+                    <div class="icon">
+                        <img src="https://yt3.googleusercontent.com/ytc/AIdro_nI9T5ztWukixMkqXOuB_Qh97IO2AKB8tU-cUG7s0WLMQ=s900-c-k-c0x00ffffff-no-rj" alt="Zenwork" style="width: 100px; height: 40px;">
+                    </div>
+                    Merichtech
+                </button>
+                <button id="zenworkBtn">
+                    <div class="icon">
+                        <img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/yC70vCQWmbeoTuxnYgXx/media/66f01fcc3b00e250d9ee438e.png" alt="Zenwork" style="width: 100px; height: 50px;">
+                    </div>
+                    Zenwork
+                </button>
+                <button id="zenworkBtn">
+                    <div class="icon">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmPZLKETIi9Nwfqd5oRGxcexZx9TmRnsYV6nEMeOrW-_MwUrbsvXWCuM3SlUQJNF-sTik&usqp=CAU" alt="Zenwork" style="width: 100px; height: 40px;">
+                    </div>
+                    Azurewrok
+                </button>
+                <button id="zenworkBtn">
+                    <div class="icon">
+                        <img src="https://media.licdn.com/dms/image/C510BAQExQTIAnbK4TA/company-logo_200_200/0/1631360905831?e=2147483647&v=beta&t=3yC_VeLZ2rXMavdD8_sPVzd4l45ijLXAOQnSBaNGov0" alt="Zenwork" style="width: 100px; height: 40px;">
+                    </div>
+                    CCNS
+                </button>
+                <button id="zenworkBtn">
+                    <div class="icon">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D0BAQEdrxX5mRorbA/company-logo_200_200/company-logo_200_200/0/1721645539599?e=2147483647&v=beta&t=TfLw9wwzEWJbHEn12egMB1HZh-ydN1oabW7XiI48GYk" alt="Zenwork" style="width: 100px; height: 45px;">
+                    </div>
+                    Zolix
+                </button>
+            </div>
+            <button onclick="handleNavigation('.loginpage2.html')">
+                <div class="icon">
+                    <img src="https://t3.ftcdn.net/jpg/03/08/45/52/360_F_308455286_JkoAH5Cto6RYXf2We9EduDsoLU2B1OFB.jpg" alt="Dashboard">
+                </div>
+                Dashboard
+            </button>
+            <button id="actionCentreBtn">
+                <div class="icon">
+                    <img src="https://img.icons8.com/ios-filled/50/ffffff/target.png" alt="Action Centre">
+                </div>
+                Action Centre
+            </button>   
+            <button id="monitoringBtn">
+                <div class="icon">
+                    <img src="https://media.licdn.com/dms/image/D5612AQEoa7kEHrYXDw/article-cover_image-shrink_600_2000/0/1679845683736?e=2147483647&v=beta&t=PO0mKUQcd0QnrQPh7bXMliHF0p7UOCSj2JhQI64H8vg" alt="Monitoring" style="width: 60px; height: 30px;">
+                </div>
+                Monitoring
+            </button>
+            <button id="resourceBtn">
+                <div class="icon">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSst-viaAOWDdrbXsLv0NHeRtRa7iCm9ksOFw&s" alt="Resource">
+                </div>
+                Resource
+            </button>
+            <button id="reportsBtn">
+                <div class="icon">
+                    <img src="https://png.pngtree.com/png-clipart/20190925/original/pngtree-reports-icon-for-your-project-png-image_4891901.jpg" alt="Reports" style="width: 40px; height: 40px;">
+                </div>
+                Reports
+            </button>
+            <button id="costInsightsBtn">
+                <div class="icon">
+                    <img src="https://as2.ftcdn.net/v2/jpg/03/20/92/87/1000_F_320928796_OaCLsWhoWCMXFL4HsA9eb0qNkHANDA2R.jpg" alt="Cost Insights" style="width: 60px; height: 40px;">
+                </div>
+                Cost Insights
+            </button>
+            <button id="jobsBtn">
+                <div class="icon">
+                    <img src="https://cdn-icons-png.flaticon.com/256/2245/2245142.png" alt="Jobs">
+                </div>
+                Jobs
+            </button>
+            <button id="alertsBtn">
+                <div class="icon">
+                    <img src="https://thumbs.dreamstime.com/b/alarm-alert-bell-notification-icon-orange-vector-sketch-use-print-media-web-design-projects-any-other-types-commercial-240246110.jpg" alt="Alerts" style="width: 40px; height: 40px;">
+                </div>
+                Alerts
+            </button>
+            <button id="notificationsBtn">
+                <div class="icon">
+                    <img src="https://img.freepik.com/free-vector/notification-bell-red_78370-6897.jpg" alt="Notifications" style="width: 30px; height: 30px;">
+                </div>
+                Notifications
+            </button>
+
+            <button id="settingsBtn">
+                <div class="icon">
+                    <img src="https://cdn.iconscout.com/icon/free/png-256/free-apple-settings-icon-download-in-svg-png-gif-file-formats--logo-optimization-device-apps-pack-user-interface-icons-493162.png" alt="Settings" style="width: 100px; height: 45px;">
+                </div>
+                Settings
+            </button>
+            <button id="analyticCentreMenuBtn">
+                <div class="icon">
+                    <img src="https://img.freepik.com/premium-vector/analytic-graph-logo-vector-icon-illustration_12860-119.jpg?semt=ais_hybrid" alt="Analytic Centre" style="width: 50px; height: 50px;">
+                </div>
+                Analytic Centre
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content" id="analyticCentreContent">
+        <h2>Choose Dataset</h2>
+        <div class="search-container">
+            <div class="search-icon">🔍</div>
+            <input type="text" class="search-box" placeholder="Search Dataset..." id="datasetSearchBox">
+            <div class="dataset-dropdown" id="datasetDropdown"></div>
+        </div>
+
+        <h2>Choose chart</h2>
+        <div class="search-container">
+            <div class="search-icon">🔍</div>
+            <input type="text" class="search-box" placeholder="Search charts..." id="chartSearchBox">
+        </div>
+
+        <div class="chart-grid" id="chartGrid">
+
+            <div class="chart-box" data-chart="pieChart">
+                <div class="chart-logo">
+                    <img src="https://img.freepik.com/premium-vector/colored-pie-chart-with-percentage-graphic-business-presentation-dark-vector-illustration_547674-136.jpg?semt=ais_hybrid" alt="Pie Chart">
+                </div>
+                <div class="chart-name">Pie Chart</div>
+            </div>
+            <div class="chart-box" data-chart="donutChart">
+                <div class="chart-logo">
+                    <img src="https://media.istockphoto.com/id/1405597943/photo/3d-render-donut-chart-minimal-icon-isolated-on-purple-background-illustration-business-and.jpg?s=612x612&w=0&k=20&c=jLNEAfOQIGooi50sm0vCxh1h7gwU0uk95V2S3ytn_vA=" alt="Donut Chart">
+                </div>
+                <div class="chart-name">Donut Chart</div>
+            </div>
+            <div class="chart-box" data-chart="barChart">
+                <div class="chart-logo">
+                    <img src=" https://cdn.create.vista.com/api/media/small/470982074/stock-vector-bar-chart-blue-gradient-vector-icon" alt="Bar Chart">
+                </div>
+                <div class="chart-name">Bar Chart</div>
+            </div>
+            <div class="chart-box" data-chart="verticalBar">
+                <div class="chart-logo">
+                    <img src="https://static.anychart.com/images/gallery/v8/vertical-charts-bar-chart.png" alt="Vertical Bar Chart">
+                </div>
+                <div class="chart-name">Vertical Bar Chart</div>
+            </div>
+            <div class="chart-box" data-chart="stackedBarChart">
+                <div class="chart-logo">
+                    <img src="https://community.thoughtspot.com/sfc/servlet.shepherd/version/renditionDownload?rendition=THUMB720BY480&versionId=0683n00000GXY8Y&operationContext=CHATTER&contentId=05T3n00001HpRRb&page=0" alt="Stacked Bar Chart">
+                </div>
+                <div class="chart-name">Stacked Bar Chart</div>
+            </div>
+            <div class="chart-box" data-chart="lineChart">
+                <div class="chart-logo">
+                    <img src="https://docs.streamlit.io/images/api/line_chart.jpg" alt="Line Chart">
+                </div>
+                <div class="chart-name">Line Chart</div>
+            </div>
+            <div class="chart-box" data-chart="areaChart">
+                <div class="chart-logo">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2YeAcLuzAYcpALklWexCcffKtc09sRY-5xA&s" alt="Area Chart">
+                </div>
+                <div class="chart-name">Area Chart</div>
+            </div>
+            <div class="chart-box" data-chart="bigNumber">
+                <div class="chart-logo">
+                    <img src="https://superset.datatest.ch/static/assets/thumbnail.1a9ace38..png" alt="Big Number">
+                </div>
+                <div class="chart-name">Big Number</div>
+            </div>
+            <div class="chart-box" data-chart="table">
+                <div class="chart-logo">
+                    <img src="https://www.shutterstock.com/image-vector/business-price-chart-template-web-260nw-2440502569.jpg" alt="Table">
+                </div>
+                <div class="chart-name">Table</div>
+            </div>
+            <div class="chart-box" data-chart="gauge">
+                <div class="chart-logo">
+                    <img src="https://img.freepik.com/premium-vector/gauge-meter-indicator-speedometer-icon-with-red-yellow-green-scale-arrow-progress-performance-chart-vector-illustration_266693-1395.jpg" alt="Gauge Chart">
+                </div>
+                <div class="chart-name">Gauge Chart</div>
+            </div>
+            <div class="chart-box" data-chart="Funnel">
+                <div class="chart-logo">
+                    <img src="https://images.edrawmax.com/what-is/funnel-chart/funnel-chart-1.jpg" alt="Funnel Chart">
+                </div>
+                <div class="chart-name">Funnel Chart</div>
+            </div>
+            <div class="chart-box" data-chart="pivoit">
+                <div class="chart-logo">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgzFwQoYKbn0OHFMwetvP8rWTnX_yUGrdJ-TFpSbxE0TUY34Ezjf1lu1fcnaYQeicy2d5uoXP1iZLuKLHVgSfvNNo65xv219qR-N_U7S_5aZxwVeQFgr0wbz6AlgiduxesNOzzzTzTp8S6_/d/Pivot+Table+raw+data.JPG" alt="pivoit Chart">
+                </div>
+                <div class="chart-name">Pivoit Chart</div>
+            </div>
+            <div class="chart-box" data-chart="">
+                <div class="chart-logo">
+                    <img src="https://platform.docs.lifeomic.com/assets/images/insights-time-series-e9ac2cffd686de5b00393dfcdad6f09a.png" alt="pivoit Chart">
+                </div>
+                <div class="chart-name">Timeseries Bar Chart</div>
+            </div>
+            <div class="chart-box" data-chart="">
+                <div class="chart-logo">
+                    <img src="https://jtablesaw.github.io/tablesaw/userguide/images/eda/bush_time_series.png" alt="pivoit Chart">
+                </div>
+                <div class="chart-name">Timeseries line Chart</div>
+            </div>
+            <div class="chart-box" data-chart="">
+                <div class="chart-logo">
+                    <img src="https://cdn.mescius.io/document-site-files/images/8d606653-16a0-474d-b9dc-e2b4d01c2446/images/sunburst-chart.png" alt="pivoit Chart">
+                </div>
+                <div class="chart-name">Sunburst Chart</div>
+            </div>
+        </div>
+        
+        
+        <button class="next-button"> Create chart </button>
+    </div>
+
+    <script>
+        let datasets = [];
+        const datasetSearchBox = document.getElementById('datasetSearchBox');
+        const datasetDropdown = document.getElementById('datasetDropdown');
+        const analyticCentreMenuBtn = document.getElementById('analyticCentreMenuBtn');
+        const analyticCentreContent = document.getElementById('analyticCentreContent');
+
+        async function fetchDatasets() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/get/tables');
+                const data = await response.json();
+                datasets = data.tables || data;
+                displayDatasets(datasets);
+            } catch (error) {
+                console.error('Error fetching datasets:', error);
+                datasetDropdown.innerHTML = '<div class="dataset-item">Error loading datasets</div>';
+            }
+        }
+
+        function displayDatasets(datasetsToShow) {
+            datasetDropdown.innerHTML = '';
+
+            datasetsToShow.forEach(dataset => {
+                const div = document.createElement('div');
+                div.className = 'dataset-item';
+                div.textContent = typeof dataset === 'string' ? dataset : dataset.name;
+
+                div.addEventListener('click', () => {
+                    datasetSearchBox.value = div.textContent;
+                    datasetDropdown.classList.remove('show');
+                });
+
+                datasetDropdown.appendChild(div);
+            });
+        }
+        function toggleExtraButtons() {
+        var extraButtons = document.getElementById("extraButtons");
+        extraButtons.style.display = (extraButtons.style.display === "none" || extraButtons.style.display === "") ? "block" : "none";
+         }
+
+        function toggleUserManagementDropdown() {
+        var dropdown = document.getElementById("userManagementDropdown");
+        dropdown.style.display = (dropdown.style.display === "none" || dropdown.style.display === "") ? "block" : "none";
+         }
+        function toggleUserManagementDropdown() {
+        var dropdown = document.getElementById("userManagementDropdown");
+        dropdown.style.display = (dropdown.style.display === "none" || dropdown.style.display === "") ? "block" : "none";
+        }
+        datasetSearchBox.addEventListener('input', () => {
+            const searchTerm = datasetSearchBox.value.toLowerCase();
+            const filteredDatasets = datasets.filter(dataset => {
+                const datasetName = typeof dataset === 'string' ? dataset : dataset.name;
+                return datasetName.toLowerCase().includes(searchTerm);
+            });
+            displayDatasets(filteredDatasets);
+            datasetDropdown.classList.add('show');
+        });
+
+        datasetSearchBox.addEventListener('click', () => {
+            displayDatasets(datasets);
+            datasetDropdown.classList.add('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!datasetSearchBox.contains(e.target) && !datasetDropdown.contains(e.target)) {
+                datasetDropdown.classList.remove('show');
+            }
+        });
+
+    
+        const chartBoxes = document.querySelectorAll('.chart-box');
+        chartBoxes.forEach(box => {
+            box.addEventListener('click', () => {
+                chartBoxes.forEach(b => b.classList.remove('selected'));
+                box.classList.add('selected');
+            });
+        });
+
+        const chartSearchBox = document.getElementById('chartSearchBox');
+        chartSearchBox.addEventListener('input', () => {
+            const query = chartSearchBox.value.toLowerCase();
+            const chartNames = document.querySelectorAll('.chart-name');
+            chartNames.forEach(chart => {
+                const box = chart.closest('.chart-box');
+                box.style.display = chart.textContent.toLowerCase().includes(query) ? 'block' : 'none';
+            });
+        });
+
+        
+        analyticCentreMenuBtn.addEventListener('click', () => {
+            analyticCentreContent.classList.toggle('active');
+        });
+        fetchDatasets();
+    </script>
+</body>
+</html>
